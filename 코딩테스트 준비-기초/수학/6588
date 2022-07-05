@@ -1,0 +1,25 @@
+let input = require("fs").readFileSync("/dev/stdin").toString().split("\n");
+let maxNum = Math.max(...input);
+let fail = false;
+let result = new Array(maxNum + 1).fill(true);
+let answer = "";
+
+for (let i = 2; i <= maxNum; i++) {
+  if (result[i]) {
+    for (let j = i; i * j <= maxNum; j++) {
+      result[i * j] = false;
+    }
+  }
+}
+
+for (let i = 0; i < input.length - 1; i++) {
+  for (let j = 3; j <= input[i]; j++) {
+    if (result[j] && result[input[i] - j]) {
+      fail = true;
+      answer += `${input[i]} = ${j} + ${input[i] - j}\n`;
+      break;
+    }
+  }
+  if (!fail) answer += `"Goldbach's conjecture is wrong."\n`;
+}
+console.log(answer);
