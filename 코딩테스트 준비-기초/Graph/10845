@@ -1,0 +1,46 @@
+let input = require("fs").readFileSync("/dev/stdin").toString().split("\n");
+
+const t = parseInt(input[0]);
+const queue = [];
+let answer = "";
+for (let i = 0; i < t; i++) {
+  const arr = input[i + 1].split(" ");
+  const command = arr[0];
+  const num = parseInt(arr[1]);
+  if (command === "push") {
+    queue.push(num);
+  }
+  if (command === "pop") {
+    if (queue.length === 0) {
+      answer += "-1\n";
+    } else {
+      answer += `${queue.shift()}\n`;
+    }
+  }
+  if (command === "size") {
+    answer += `${queue.length}\n`;
+  }
+  if (command === "empty") {
+    if (queue.length === 0) {
+      answer += `1\n`;
+    } else {
+      answer += `0\n`;
+    }
+  }
+  if (command === "front") {
+    if (queue.length === 0) {
+      answer += `-1\n`;
+    } else {
+      answer += `${queue[0]}\n`;
+    }
+  }
+  if (command === "back") {
+    if (queue.length === 0) {
+      answer += `-1\n`;
+    } else {
+      answer += `${queue[queue.length - 1]}\n`;
+    }
+  }
+}
+
+console.log(answer);
