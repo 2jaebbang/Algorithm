@@ -1,0 +1,13 @@
+//let input = require("fs").readFileSync("example.txt").toString().split("\n");
+let input = require("fs").readFileSync("/dev/stdin").toString().split("\n");
+
+const n = parseInt(input[0]);
+const cards = input[1].split(" ").map((v) => parseInt(v));
+const dp = new Array(n + 1).fill(0);
+for (let i = 1; i <= n; i++) {
+  for (let j = 1; j <= i; j++) {
+    dp[i] = Math.max(dp[i], dp[i - j] + parseInt(cards[j - 1]));
+  }
+}
+
+console.log(dp[n]);
