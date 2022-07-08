@@ -1,0 +1,60 @@
+const fs = require("fs");
+const stdin = fs.readFileSync("/dev/stdin").toString().split("\n");
+const input = (() => {
+  let line = 0;
+  return () => stdin[line++];
+})();
+
+const main = function () {
+  const go = [
+    // 0번 연산은 없으므로 null로 채워줍시다.
+    null,
+    // 1번 연산: 상하 반전
+    (board) => [...board].reverse(),
+    // 2번 연산: 좌우 반전
+    (board) => board.map((row) => [...row].reverse()),
+    // 3번 연산: 오른쪽 90도 회전
+    (board) => {
+      const n = board.length,
+        m = board[0].length;
+      const ret = Array.from(Array(m), () => new Array(n));
+      for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+          ret[i][j] = board[n - j - 1][i];
+        }
+      }
+      return ret;
+    },
+    // 4번 연산: 왼쪽 90도 회전
+    (board) => go[3](go[3](go[3](board))),
+    // 5번 연산: 사 등분 오른쪽 90도 회전
+    (board) => {
+      const n = board.length / 2,
+        m = board[0].length / 2;
+      const top = board.slice(0, n),
+        bottom = board.slice(n);
+      const part1 = top.map((row) => row.slice(0, m)),
+        part2 = top.map((row) => row.slice(m)),
+        part3 = bottom.map((row) => row.slice(0, m)),
+        part4 = bottom.map((row) => row.slice(m));
+      return [
+        ...part3.map((row, i) => [...row, ...part1[i]]),
+        ...part4.map((row, i) => [...row, ...part2[i]]),
+      ];
+    },
+    // 6번 연산: 사 등분 왼쪽 90도 회전
+    (board) => go[5](go[5](go[5](board))),
+  ];
+  const [n, m, r] = input().split(" ").map(Number);
+  const board = Array(n);
+  for (let i = 0; i < n; i++) {
+    board[i] = input().split(" ");
+  }
+
+  const commands = input().split(" ");
+  const ans = commands.reduce((ans, cmd) => go[cmd](ans), board);
+  const ansString = ans.reduce((str, row) => (str += row.join(" ") + "\n"), "");
+  console.log(ansString);
+};
+
+main();
