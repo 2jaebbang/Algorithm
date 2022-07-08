@@ -1,0 +1,31 @@
+const fs = require("fs");
+const stdin = fs.readFileSync("/dev/stdin").toString().split("\n");
+const input = (() => {
+  let line = 0;
+  return () => stdin[line++];
+})();
+
+const dp = Array.from({ length: 101 }, () => new Array(10).fill(0));
+
+const n = parseInt(input());
+
+let answer = 0;
+dp[1] = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+dp[2] = [1, 1, 2, 2, 2, 2, 2, 2, 2, 1];
+for (let i = 3; i <= n; i++) {
+  for (let j = 0; j <= 9; j++) {
+    if (j === 0) {
+      dp[i][j] = dp[i - 1][j + 1] % 1000000000;
+    } else if (j >= 1 && j <= 8) {
+      dp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j + 1]) % 1000000000;
+    } else if (j === 9) {
+      dp[i][j] = dp[i - 1][j - 1] % 1000000000;
+    }
+  }
+}
+
+for (let i = 0; i <= 9; i++) {
+  answer += dp[n][i];
+}
+
+console.log(answer % 1000000000);
