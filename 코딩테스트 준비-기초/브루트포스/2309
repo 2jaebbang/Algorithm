@@ -1,0 +1,33 @@
+const fs = require("fs");
+const stdin = fs.readFileSync("/dev/stdin").toString().split("\n");
+const input = (() => {
+  let line = 0;
+  return () => stdin[line++];
+})();
+
+const arr = new Array(9);
+let sum = 0;
+for (let i = 0; i < 9; i++) {
+  arr[i] = parseInt(input());
+  sum += arr[i];
+}
+
+arr.sort((a, b) => a - b);
+
+let a = 0;
+let b = 0;
+for (let i = 0; i < 8; i++) {
+  for (let j = i + 1; j < 9; j++) {
+    if (arr[i] + arr[j] === sum - 100) {
+      a = i;
+      b = j;
+      break;
+    }
+  }
+}
+
+for (let i = 0; i < 9; i++) {
+  if (i !== a && i !== b) {
+    console.log(arr[i]);
+  }
+}
