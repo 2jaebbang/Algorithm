@@ -1,0 +1,28 @@
+const fs = require("fs");
+const stdin = fs.readFileSync("/dev/stdin").toString().split("\n");
+const input = (() => {
+  let line = 0;
+  return () => stdin[line++];
+})();
+const n = parseInt(input());
+let arr = Array.from(Array(n), () => Array(2).fill(0));
+for (let i = 0; i < n; i++) {
+  let inp = input().split(" ").map(Number);
+  arr[i][0] = inp[0]; //소요 일수
+  arr[i][1] = inp[1]; //금액
+}
+
+const dp = new Array(n).fill(0);
+
+for (let i = 0; i < n; i++) {
+  if (i + arr[i][0] > n) {
+    continue;
+  }
+  dp[i] += arr[i][1];
+
+  for (let j = i + arr[i][0]; j < n; j++) {
+    dp[j] = Math.max(dp[j], dp[i]); // 현재 금액, i일 뒤에 받게 될 금액 비교
+  }
+}
+
+console.log(Math.max(...dp));
