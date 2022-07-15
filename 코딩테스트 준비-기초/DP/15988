@@ -1,0 +1,12 @@
+var fs = require('fs');
+var inputs = fs.readFileSync('/dev/stdin').toString().split('\n').map(v=>Number(v));
+var cases = Number(inputs[0]);
+inputs.shift();
+var arr = [0, 1, 2, 4];
+var num = Math.max(...inputs);
+for(var j=4; j<=num; j++){
+    arr[j] = (arr[j-1] + arr[j-2] + arr[j-3]) % 1000000009;
+}
+for(var i=0; i<cases; i++){
+    console.log(arr[inputs[i]]);
+}
