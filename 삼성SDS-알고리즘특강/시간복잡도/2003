@@ -1,0 +1,41 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+        int[] nums = new int[N+1];
+
+        st = new StringTokenizer(br.readLine());
+        for(int i=0; i<N; i++){
+            nums[i] = Integer.parseInt(st.nextToken());
+        }
+
+        int low = 0, high = 0, sum = nums[0], count = 0;
+      while (true){
+          // sum == M -> 답 low++
+          if(sum==M){
+              count++;
+              sum -= nums[low++];
+          }
+          // sum > M -> low++
+          else if (sum > M){
+              sum -= nums[low++];
+          }
+          // sum < M -> high++
+          else {
+              sum += nums[++high];
+          }
+          if(high == N){
+              break;
+          }
+      }
+      System.out.println(count);
+    }
+}
