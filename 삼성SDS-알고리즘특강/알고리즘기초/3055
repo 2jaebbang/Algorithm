@@ -1,0 +1,96 @@
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+public class Main {
+    static class Node {
+        int x;
+        int y;
+        int type;
+
+        public Node(int y, int x, int type){
+            this.y = y;
+            this.x = x;
+            this.type = type;
+        }
+    }
+
+                          // 좌, 우, 위, 아래
+    static final int[] dx = {-1, 1, 0, 0};
+    static final int[] dy = {0, 0, -1, 1};
+
+    static int R, C;
+    static char[][] map;
+    static int[][] dp;
+    static Queue<Node> queue;
+    static boolean foundAnswer;
+
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        R = sc.nextInt();
+        C = sc.nextInt();
+
+        map = new char[R][C];
+        dp = new int[R][C];
+        queue = new LinkedList<>();
+
+        Node st = null;
+        for (int r = 0; r < R; r++) {
+            String str = sc.next();
+            for (int c = 0; c < C; c++) {
+                map[r][c] = str.charAt(c);
+                //물 먼저 넣음. 전제조건에서 다음 턴에 물이 번질 가능성이 있는 위치에는 고슴도치가 이동할 수 없기 때문에
+                //물이 먼저 범람하도록 하여 이를 쉽게 해결.
+                if (map[r][c] == '*') {
+                    queue.add(new Node(r, c, '*'));
+                } else if (map[r][c] == 'S') {
+                    st = new Node(r, c, 'S');
+                }
+            }
+        }
+        queue.add(st);
+
+        while (!queue.isEmpty()) {
+//        1.큐에서 꺼내옴(큐에는 이동할 곳이 들어감) -> *, s, ., D
+            Node n = queue.poll();
+//        2.목적지인가? -> D
+            if (n.type == 'D') {
+                //답 출력
+                System.out.println(dp[n.y][n.x]);
+                foundAnswer = true;
+                break;
+            }
+//        3.연결된 곳을 순회 -> 좌우위아래
+            for (int i = 0; i < 4; i++) {
+                int ty = n.y + dy[i];
+                int tx = n.x + dx[i];
+//            4.갈 수 있는가? (공통) : 맵 안에 들어오는가
+                if (0 <= ty && ty < R && 0 <= tx && tx < C) {
+                    if (n.type == 'S' || n.type == '.') {
+//                4.갈 수 있는가? (도슴도치) : . or D, 방문하지 않은 곳
+                        if ((map[ty][tx] == '.' || map[ty][tx] == 'D') && dp[ty][tx] == 0) {
+//                        5.체크인 (고슴도치) : dp[][] = 이동거리
+                            dp[ty][tx] = dp[n.y][n.x] + 1;
+                            //6. 큐에 넣음
+                            queue.add(new Node(ty, tx, map[ty][tx]));
+                        }
+                    } else if (n.type == '*') {
+//                     4.갈 수 있는가? (물) : . (물은 지나가면 알아서 방문체크됨) *물은 S도 방문가능.
+                        if (map[ty][tx] == '.' || map[ty][tx] == 'S') {
+//                        5.체크인 (물) : map[][] = *
+                            map[ty][tx] = '*';
+//                        6.큐에 넣음
+                            queue.add(new Node(ty, tx, '*'));
+                        }
+                    }
+                }
+            }
+        }
+        if(foundAnswer){
+        } else {
+            System.out.println("KAKTUS");
+        }
+    }
+}
