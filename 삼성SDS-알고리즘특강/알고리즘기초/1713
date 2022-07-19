@@ -1,0 +1,74 @@
+import java.util.*;
+
+public class Main {
+    static class Student implements Comparable<Student> {
+        int num;
+        int time;
+        int like;
+        boolean isIn;  //사진틀에 이 사람이 있는지 없는지 확인
+
+        public Student(int num, int like, int time, boolean isIn){
+            this.time = time;
+            this.like = like;
+            this.num = num;
+            this.isIn = isIn;
+        }
+
+        public int compareTo(Student s){
+            //1. 추천수, 2. 시간
+            int comp = Integer.compare(like, s.like);
+            if(comp == 0){
+                return Integer.compare(time, s.time);
+            } else
+                return comp;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Student[] students = new Student[101];
+
+        int n = sc.nextInt();
+        int allLike = sc.nextInt();
+
+        //1.학생들이 추천을 시작하기 전에 모든 사진틀은 비어있다.
+        ArrayList<Student> picture = new ArrayList<>();
+
+        //2.어떤 학생이 특정 학생을 추천하면, 추천받은 학생의 사진이 반드시 사진틀에 게시되어야 한다.
+        for(int i=0; i<allLike; i++){
+            int num = sc.nextInt();
+            //해당 후보가 최초 호출 시
+            if(students[num] ==null){
+                students[num] = new Student(num, 0, 0, false);
+            }
+            //해당 후보가 사진틀에 있을 경우
+            if(students[num].isIn == true){
+                students[num].like++;
+            }
+            //해당 후보가 사진 틀에 없음
+            else {
+                //사진들이 가득 찬 경우
+                if(picture.size() == n){
+                    //정렬, 지울 후보 선정, 제거
+                    Collections.sort(picture);
+                    picture.get(0).isIn = false;
+                    picture.remove(0);
+                }
+                //사진틀에 여유가 있는 경우
+                //students[num].num = num;
+                students[num].like = 1;
+                students[num].isIn = true;
+                students[num].time = i;
+                picture.add(students[num]);
+            }
+        }
+        Collections.sort(picture, new Comparator<Student>() {
+            public int compare(Student s1, Student s2){
+                return Integer.compare(s1.num, s2.num);
+            }
+        });
+        for(int i=0; i<picture.size(); i++){
+            System.out.print(picture.get(i).num+" ");
+        }
+    }
+}
