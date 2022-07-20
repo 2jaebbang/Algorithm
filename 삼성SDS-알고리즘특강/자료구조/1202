@@ -1,0 +1,77 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Main {
+    static int N;
+    static int K;
+    static Bosuk[] jewelry;
+    static int[] bag;
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+
+         N = Integer.parseInt(st.nextToken());
+         K = Integer.parseInt(st.nextToken());
+         jewelry = new Bosuk[N];
+         bag = new int[K];
+         for(int i=0; i<N; i++){
+             st = new StringTokenizer(br.readLine());
+             int M = Integer.parseInt(st.nextToken());
+             int V = Integer.parseInt(st.nextToken());
+
+             jewelry[i] = new Bosuk(M,V);
+         }
+
+        for(int i=0; i<K; i++){
+            st = new StringTokenizer(br.readLine());
+            int C = Integer.parseInt(st.nextToken());
+            bag[i] = C;
+        }
+
+        //가방 오름차순 정렬
+        Arrays.sort(bag);
+
+        //보석무게 오름차순 정렬
+        Arrays.sort(jewelry, new Comparator<Bosuk>() {
+            @Override
+            public int compare(Bosuk o1, Bosuk o2) {
+                return o1.weight - o2.weight;
+            }
+        });
+
+        //보석 가격이 높은 값 기준 힙
+        PriorityQueue<Bosuk> pq = new PriorityQueue<>(new Comparator<Bosuk>() {
+            @Override
+            public int compare(Bosuk o1, Bosuk o2) {
+                return o2.price - o1.price;
+            }
+        });
+
+        int jIndex = 0;
+        long result = 0;
+        //1.남은 가방 중 제일 작은 가방을 선택. <- 정렬
+        for(int i=0; i<bag.length; i++){
+            //2.선택된 가방에 넣을 수 있는 남은 보석 중 가장 비싼 보석을 선택. <- 힙을 사용.
+            while(jIndex < N && jewelry[jIndex].weight <= bag[i]){
+                pq.add(jewelry[jIndex++]);
+            }
+            if(!pq.isEmpty()){
+                result +=pq.poll().price;
+            }
+        }
+        System.out.println(result);
+    }
+}
+
+class Bosuk {
+    int weight;
+    int price;
+
+    public Bosuk(int weight, int price) {
+        this.weight = weight;
+        this.price = price;
+    }
+}
