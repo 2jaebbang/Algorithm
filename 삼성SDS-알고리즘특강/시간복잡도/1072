@@ -1,0 +1,36 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Main {
+    static long X, Y;
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+         X = Long.parseLong(st.nextToken());
+         Y = Long.parseLong(st.nextToken());
+         long Z = Y*100 / X;
+
+         if(Z >= 99){
+             System.out.println(-1);
+         } else {
+             long start = 0;
+             //X를 최대값으로 넣어도 됨. 다만 X로 하면 효율화 최대.
+             long end = X;
+             while(start < end){
+                 long mid = (start + end) / 2;
+                 long newRate = (100 * (mid + Y) / (mid + X));
+                 //승률이 그대로 인 경우
+                 if(newRate == Z){
+                     start = mid + 1;
+                 }
+                 //승률이 변한 경우
+                 else {
+                     end = mid;
+                 }
+             }
+             System.out.println(end);
+         }
+    }
+}
