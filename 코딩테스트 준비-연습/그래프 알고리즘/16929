@@ -1,0 +1,67 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    static char[][] map;
+    static boolean[][] visited;
+    static final int[] dx = {-1, 1, 0, 0};
+    static final int[] dy = {0, 0, -1, 1};
+    static int N, M;
+    static int firstY, firstX;
+    public static void main(String[] args) throws NumberFormatException, IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        StringBuilder sb;
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        map = new char[N][M];
+        visited = new boolean[N][M];
+        for(int i=0; i<N; i++){
+            sb = new StringBuilder(br.readLine());
+            for(int j=0; j<M; j++){
+                map[i][j] = sb.charAt(j);
+            }
+        }
+        for(int i=0; i<N; i++){
+            for(int j=0; j<M; j++){
+                firstY = i;
+                firstX = j;
+                if(dfs(i,j,1)){
+                    System.out.println("Yes");
+                    return;
+                }
+            }
+        }
+        System.out.println("No");
+    }
+
+    static boolean dfs(int y, int x, int count){
+        //1.체크인(방문)
+        visited[y][x] = true;
+
+        //3.연결된 곳을 순회
+        for(int i=0; i<4; i++){
+            int ty = y + dy[i];
+            int tx = x + dx[i];
+
+            //2.목적지인가? : 한바퀴를 다 돌아서 처음 위치 값으로 돌아오는 경우
+            if(firstY == ty && firstX == tx && count >=4){
+                return true;
+            }
+
+            //4.갈 수 있는가?
+            if(0 <= ty && ty < N && 0<= tx && tx < M && map[y][x] == map[ty][tx]){
+                if(visited[ty][tx] == false){
+                    //5.간다.
+                    if(dfs(ty, tx, count + 1)){
+                        return true;
+                    };
+                }
+            }
+        }
+        return false;
+        //6.체크아웃
+    }
+}
