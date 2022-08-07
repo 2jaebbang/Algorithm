@@ -1,0 +1,64 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int[][] map;
+    static boolean[][] visited;
+    static int N;
+    static int[] dx = {-1,1,0,0};
+    static int[] dy = {0,0,-1,1};
+    public static void main(String[] args) throws NumberFormatException, IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        map = new int[N][N];
+        int answer = 0;
+        int max = 0;
+        for(int i=0; i<N; i++){
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for(int j=0; j<N; j++){
+                map[i][j] = Integer.parseInt(st.nextToken());
+                max = Math.max(map[i][j], max);
+            }
+        }
+
+        //비의 높이 0 ~ max높이
+        for(int k=0; k<=max; k++){
+            int sum = 0;
+            //매 비 높이 케이스마다 방문 초기화
+            visited = new boolean[N][N];
+            for(int i=0; i<N; i++){
+                for(int j=0; j<N; j++){
+                    //아직 방문하지 않았고, 물에 잠기지 않을 경우
+                    if(!visited[i][j] && map[i][j] > k){
+                        sum++;
+                        dfs(i,j,k);
+                    }
+                }
+            }
+            answer = Math.max(sum, answer);
+        }
+        System.out.println(answer);
+    }
+
+    static void dfs(int y, int x, int depth) {
+        //1.체크인(방문)
+        visited[y][x] = true;
+        //2.목적지인가? 탈출조건: 방문한 곳이 잠기는 곳이라 더이상 진행할 수 없는 경우
+        if(map[y][x] <= depth){
+            return;
+        }
+        //3.연결된 곳을 순회
+        for(int i=0; i<4; i++){
+            int ty = dy[i] + y;
+            int tx = dx[i] + x;
+            //4.갈 수 있는가? 맵 범위를 벗어나지 않고, 방문하지 않은 경우
+            if(ty >= 0 && tx >= 0 && ty < N && tx < N && !visited[ty][tx]) {
+                //5.간다
+                dfs(ty, tx, depth);
+            }
+        }
+        //6.체크아웃 한번 방문하면 다시 안가도 되기때문에 체크아웃x
+    }
+}
