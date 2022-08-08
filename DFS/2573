@@ -1,0 +1,97 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int[][] map;
+    static boolean[][] visited;
+    static int[][] melt;
+    static int N, M, answer;
+
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, 1, -1};
+
+    public static void main(String[] args) throws NumberFormatException, IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        map = new int[N][M];
+        melt = new int[N][M];
+        int max = 0;
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < M; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
+
+            }
+        }
+
+        answer = 0;
+        while (true) {
+            //매 해 방문 & 녹인 개수 & 빙하가 2개이상인지 판별하는 cnt 초기화
+            int cnt = 0;
+            visited = new boolean[N][M];
+            melt = new int[N][M];
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < M; j++) {
+                    //아직 방문하지 않았고 0이 아닐 경우
+                    if (!visited[i][j] && map[i][j] != 0){
+                        dfs(i, j);
+                        cnt++;
+                    }
+                }
+            }
+            //cnt가 0인 경우는 위의 if문이 실행된 적이 없는 것이기 때문에 모두 0인 상태.
+            if(cnt == 0){
+                System.out.println(0);
+                break;
+            }
+            //cnt가 2이상인 경우는 위의 if문이 2번 이상 실행된 상태이기 때문에 빙하가 두개이상임을 의미.
+            if(cnt >=2){
+                System.out.println(answer);
+                break;
+            }
+            melting();
+            answer++;
+        }
+    }
+
+    static void dfs(int y, int x) {
+        //1.체크인(방문)
+        visited[y][x] = true;
+
+        //현재 위치 4방면에 0이 몇개있는지 카운트
+        int cnt = 0;
+        //3.연결된 곳을 순회
+        for (int i = 0; i < 4; i++) {
+            int ty = dy[i] + y;
+            int tx = dx[i] + x;
+            if (ty >= 0 && ty < N && tx >= 0 && tx < M){
+                if(map[ty][tx] == 0){
+                    //녹일 갯수 melt배열에 저장
+                    melt[y][x]++;
+                }
+                //4.갈 수 있는가?
+                if(!visited[ty][tx] && map[ty][tx] != 0){
+                    //5.간다
+                    dfs(ty, tx);
+                }
+            }
+        }
+    }
+
+    //빙하 녹이기 함수
+    static void melting() {
+        //모든 위치에, 저장한 녹일 갯수를 빼준다.
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                map[i][j] -= melt[i][j];
+                //0보다 작을경우 0으로 변환.
+                if (map[i][j] < 0)
+                    map[i][j] = 0;
+            }
+        }
+    }
+}
