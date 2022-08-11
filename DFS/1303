@@ -1,0 +1,63 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    static char[][] map;
+    static boolean[][] visited;
+    static int N, M, count, answerW, answerB;
+
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, 1, -1};
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+            M = Integer.parseInt(st.nextToken());
+            N = Integer.parseInt(st.nextToken());
+            map = new char[N][M];
+            visited = new boolean[N][M];
+
+            for(int i=0; i<N; i++){
+                String line = br.readLine();
+                for(int j=0; j<M; j++){
+                    map[i][j] = line.charAt(j);
+                }
+            }
+
+            for(int i=0; i<N; i++){
+                for(int j=0; j<M; j++){
+                    if(!visited[i][j]){
+                        count = 0;
+                        if(map[i][j] == 'W'){
+                            dfs(i,j, 'W');
+                            answerW += count*count;
+                        }
+                        if(map[i][j]=='B'){
+                            dfs(i,j, 'B');
+                            answerB += count*count;
+                        }
+                    }
+                }
+            }
+            System.out.println(answerW + " "+ answerB);
+        }
+
+    static void dfs(int y, int x, char team) {
+        //1.체크인(방문)
+        visited[y][x] = true;
+        count++;
+        //3.연결된 곳을 순회
+        for(int i=0; i<4; i++){
+            int ty = dy[i] + y;
+            int tx = dx[i] + x;
+            //4.갈 수 있는가?
+            if(ty >= 0 && ty < N && tx>=0 && tx<M && map[ty][tx] == team && !visited[ty][tx]){
+                //5.간다
+                dfs(ty,tx, team);
+            }
+        }
+        //6.체크아웃 생략
+    }
+}
