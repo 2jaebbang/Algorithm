@@ -1,0 +1,85 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int[][] map;
+    static boolean[] visited;
+    static int N, M, cnt, answer;
+    static ArrayList<Position> house;
+    static ArrayList<Position> chicken;
+
+    public static class Position {
+        int y;
+        int x;
+        public Position(int y, int x){
+            this.y = y;
+            this.x = x;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        map = new int[N][N];
+        house = new ArrayList<>();
+        chicken = new ArrayList<>();
+        answer = Integer.MAX_VALUE;
+        for(int i=0; i<N; i++){
+            st = new StringTokenizer(br.readLine());
+            for(int j=0; j<N; j++){
+                int num = Integer.parseInt(st.nextToken());
+                map[i][j] = num;
+                if(num == 1)
+                    house.add(new Position(i,j));
+                if(num==2)
+                    chicken.add(new Position(i,j));
+            }
+        }
+        visited = new boolean[chicken.size()];
+        for(int j=0; j<chicken.size(); j++){
+            dfs(j);
+        }
+        System.out.println(answer);
+        }
+
+    static void dfs(int chickenPosition) {
+        //1.치킨집 체크인(방문)
+        visited[chickenPosition] = true;
+        cnt++;
+        //2.목적지인가? 치킨집 M개를 모두 골랐을때
+        if(cnt == M){
+            int sum = 0;
+            //사람이 있는 집을 처음부터 순회
+            for(int i=0; i<house.size(); i++){
+                int min = Integer.MAX_VALUE;
+                //치킨집 만큼 순회해서 그 중 문을 연 치킨집만(M개)
+                for(int j=0; j<chicken.size(); j++){
+                    if(visited[j]){
+                        //치킨집과 집의 거리계산
+                        int abs = Math.abs(chicken.get(j).y - house.get(i).y)+Math.abs(chicken.get(j).x - house.get(i).x);
+                        //치킨집과 집의 최소거리
+                        min = Math.min(abs, min);
+                    }
+                }
+                sum+=min;
+            }
+            //정답을 계속 최신화(최소값을 구하기 위해)
+            answer = Math.min(sum, answer);
+        } else {
+            //3.연결된 곳을 순회
+            for(int i=chickenPosition+1; i<chicken.size(); i++) {
+                //4.갈 수 있는가?
+                if (!visited[i])
+                    dfs(i);
+            }
+        }
+        //6.체크아웃
+        visited[chickenPosition] = false;
+        cnt--;
+    }
+}
