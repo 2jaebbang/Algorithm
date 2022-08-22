@@ -1,0 +1,105 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int[][] map;
+    static boolean[] visitedEmpty;
+    static boolean[][] visitedVirus;
+    static int N, M, cnt, safeArea ,answer;
+    static ArrayList<Position> empty;
+    static ArrayList<Position> virus;
+    static int[] dy = {0,0,-1,1};
+    static int[] dx = {-1,1,0,0};
+
+    public static class Position {
+        int y;
+        int x;
+        public Position(int y, int x){
+            this.y = y;
+            this.x = x;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        map = new int[N][M];
+        empty = new ArrayList<>();
+        virus = new ArrayList<>();
+        answer = Integer.MIN_VALUE;
+        for(int i=0; i<N; i++){
+            st = new StringTokenizer(br.readLine());
+            for(int j=0; j<M; j++){
+                int num = Integer.parseInt(st.nextToken());
+                map[i][j] = num;
+                if(num == 0)
+                    empty.add(new Position(i,j));
+                if(num == 2)
+                    virus.add(new Position(i,j));
+            }
+        }
+        visitedEmpty = new boolean[empty.size()];
+        for(int i=0; i<empty.size(); i++){
+            dfsWall(i);
+        }
+        System.out.println(answer);
+        }
+
+    static void dfsWall(int emptyPosition) {
+        //1.벽이 될 곳 체크인(방문)
+        visitedEmpty[emptyPosition] = true;
+        map[empty.get(emptyPosition).y][empty.get(emptyPosition).x] = 1;
+        cnt++;
+        //2.목적지인가? 벽이 될 곳 3개를 모두 골랐을때
+        if(cnt == 3){
+            visitedVirus = new boolean[N][M];
+            //벽이 3개 추가되기 떄문에 빈공간크기-3
+            safeArea = empty.size()-3;
+            //virus의 수만큼 순회
+            for(int i=0; i< virus.size(); i++){
+                //virus 퍼지게 해서 안전영역 최대를 구한다.
+                dfsVirus((virus.get(i).y), (virus.get(i).x));
+            }
+            answer = Math.max(answer, safeArea);
+        } else {
+            //3.순회
+            for(int i = emptyPosition+1; i<empty.size(); i++){
+                //4.갈 수 있는가
+                if(!visitedEmpty[i]){
+                    //5.간다
+                    dfsWall(i);
+                }
+            }
+        }
+
+        //6.체크아웃
+        visitedEmpty[emptyPosition] = false;
+        map[empty.get(emptyPosition).y][empty.get(emptyPosition).x] = 0;
+        cnt--;
+    }
+
+    static void dfsVirus(int y, int x) {
+        //1.체크인(방문)
+        visitedVirus[y][x] = true;
+        //2.목적지인가? 생략
+        //3.순회
+        for(int i=0; i<4; i++){
+            int ty = dy[i] + y;
+            int tx = dx[i] + x;
+            //4.갈 수 있는가
+            if(ty >= 0 && ty<N && tx >= 0 && tx<M && !visitedVirus[ty][tx]){
+                if(map[ty][tx] == 0){
+                    safeArea--;
+                    //5.간다
+                    dfsVirus(ty,tx);
+                }
+            }
+        }
+        //6.체크아웃 생략
+    }
+}
