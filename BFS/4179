@@ -1,0 +1,99 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int R, C;
+    static final int[] dy = {-1, 1, 0, 0};
+    static final int[] dx = {0, 0, -1, 1};
+    static char[][] map;
+    static int[][] visited;
+    static Queue<int[]> queuePerson = new LinkedList<>();
+    static Queue<int[]> queueFire = new LinkedList<>();
+
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        st = new StringTokenizer(br.readLine());
+        R = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+        map = new char[R][C];
+        visited = new int[R][C];
+
+        for (int i = 0; i < R; i++) {
+            String str = br.readLine();
+            for (int j = 0; j < C; j++) {
+                map[i][j] = str.charAt(j);
+                if (map[i][j] == 'J') {
+                    queuePerson.add(new int[]{i, j, 1});
+                    visited[i][j] = 1;
+                }
+                if (map[i][j] == 'F') {
+                    queueFire.add(new int[]{i, j});
+                    visited[i][j] = 2;
+                }
+            }
+        }
+        bfs();
+
+    }
+
+    static void bfs() {
+        while (!queuePerson.isEmpty()) {
+                int fireSize = queueFire.size();
+                for (int t = 0; t < fireSize; t++) {
+                    int[] pollFire = queueFire.poll();
+                    int currentFireY = pollFire[0];
+                    int currentFireX = pollFire[1];
+                    //3.연결된 곳을 순회  //불 이동
+                    for (int i = 0; i < 4; i++) {
+                        int nextFireY = currentFireY + dy[i];
+                        int nextFireX = currentFireX + dx[i];
+                        //4.갈수 있는가  visited 0 : 사람 방문전, 1: 사람 방문 후, 2: 불 방문
+                        if (nextFireY >= 0 && nextFireY < R && nextFireX >= 0 && nextFireX < C) {
+                            if (visited[nextFireY][nextFireX] != 2 && map[nextFireY][nextFireX] != '#') {
+                                //5.체크인
+                                visited[nextFireY][nextFireX] = 2;
+                                //6.큐에 넣음
+                                queueFire.add(new int[]{nextFireY, nextFireX});
+                            }
+                        }
+                    }
+                }
+                //3.연결된 곳을 순회 //사람 이동
+            //1.큐에서 꺼내옴
+            int personSize = queuePerson.size();
+            for(int t=0; t<personSize; t++){
+                int[] pollPerson = queuePerson.poll();
+                int currentPersonY = pollPerson[0];
+                int currentPersonX = pollPerson[1];
+                int count = pollPerson[2];
+
+                //2.목적지인가? 현재 맵의 가장자리에 있을 경우
+                if (currentPersonY == R - 1 || currentPersonX == C - 1 || currentPersonY == 0 || currentPersonX == 0) {
+                    System.out.println(count);
+                    return;
+                }
+                for (int i = 0; i < 4; i++) {
+                    int nextPersonY = currentPersonY + dy[i];
+                    int nextPersonX = currentPersonX + dx[i];
+                    //4.갈수 있는가  visited 0 : 사람 방문전, 1: 사람 방문 후, 2: 불 방문
+                    if (nextPersonY >= 0 && nextPersonY < R && nextPersonX >= 0 && nextPersonX < C) {
+                        if (visited[nextPersonY][nextPersonX] == 0 && map[nextPersonY][nextPersonX] == '.') {
+                            //5.체크인
+                            visited[nextPersonY][nextPersonX] = 1;
+                            //6.큐에 넣음
+                            //System.out.println("person: " + nextPersonY + ", " + nextPersonX);
+                            queuePerson.add(new int[]{nextPersonY, nextPersonX, count + 1});
+                        }
+                    }
+                }
+            }
+            }
+        System.out.println("IMPOSSIBLE");
+    }
+}
