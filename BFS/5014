@@ -1,0 +1,66 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int F, S, G, U, D;
+    static boolean state;
+    static int[] map;
+    static Queue<Integer> queue;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        F = Integer.parseInt(st.nextToken());
+        S = Integer.parseInt(st.nextToken());
+        G = Integer.parseInt(st.nextToken());
+        U = Integer.parseInt(st.nextToken());
+        D = Integer.parseInt(st.nextToken());
+
+        map = new int[F+1];
+        queue = new LinkedList<>();
+
+        //시작층 큐에 집어넣고 1로 초기화함으로써 방문처리&count
+        queue.add(S);
+        map[S] = 1;
+        bfs();
+        if(!state){
+            System.out.println("use the stairs");
+        } else {
+            //처음 시작층은 버튼을 안누르기 때문에 -1
+            System.out.println(map[G]-1);
+        }
+    }
+
+    static void bfs() {
+            while (!queue.isEmpty()) {
+                //1.큐에서 꺼내옴
+                int current = queue.poll();
+                //2.목적지인가? bfs는 자동으로 왼쪽부터 순회하기 때문에 제일 먼저 G에 도달하면 자동으로 최솟값임.
+                if (current == G) {
+                    state = true;
+                    break;
+                } else {
+                    //3.연결된 곳을 순회
+                    //4.갈 수 있는가? 올라갈때 F층을 초과하지 않고, 아직 방문하지 않았을때
+                    if(current + U <=F && map[current+U]==0){
+                        //5.방문한다.
+                        //이전 층에 1을 더해 count를 증가시킨다. 자동으로 방문처리.
+                        map[current+U] = map[current]+1;
+                        //6.큐에 집어넣음
+                        queue.add(current+U);
+                    }
+                    //4.갈 수 있는가? 내려갈때 1층을 아래로 내려가지 않고, 아직 방문하지 않았을때
+                    if(current - D >= 1 && map[current-D]==0){
+                        //5.방문한다.
+                        //이전 층에 1을 더해 count를 증가시킨다. 자동으로 방문처리.
+                        map[current-D] = map[current]+1;
+                        //6.큐에 집어넣음
+                        queue.add(current-D);
+                    }
+                }
+            }
+        }
+}
