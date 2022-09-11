@@ -1,0 +1,86 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int L,R,C;
+    static final int[] dy = {-1,1,0,0,0,0};
+    static final int[] dx = {0,0,-1,1,0,0};
+    static final int[] dz = {0,0,0,0,-1,1};
+    static char[][][] building;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        while (true){
+            st = new StringTokenizer(br.readLine());
+            L = Integer.parseInt(st.nextToken());
+            R = Integer.parseInt(st.nextToken());
+            C = Integer.parseInt(st.nextToken());
+            int startX = 0, startY = 0, startZ = 0;
+            if(L==0 && R==0 && C==0)
+                break;
+            building = new char[L][R][C];
+
+            for(int t=0; t<L; t++){
+                for(int i=0; i<R; i++){
+                    String str = br.readLine();
+                    for(int j=0; j<C; j++){
+                        building[t][i][j] = str.charAt(j);
+                        if(building[t][i][j]=='S'){
+                            startZ = t;
+                            startY = i;
+                            startX = j;
+                        }
+                    }
+                }
+                br.readLine();
+            }
+            bfs(startZ, startY, startX);
+        }
+
+    }
+
+    static void bfs(int z, int y, int x) {
+        Queue<int[]> queue = new LinkedList<>();
+        boolean[][][] visited = new boolean[L][R][C];
+        //첫 큐에 시작위치를 넣는다
+        queue.add(new int[] {z,y,x,0});
+        visited[z][y][x] = true;
+        //int cnt = 0;
+        while (!queue.isEmpty()){
+            //1.큐에서 꺼내옴
+            int[] poll = queue.poll();
+            int pz = poll[0];
+            int py = poll[1];
+            int px = poll[2];
+            int cnt = poll[3];
+            //2.목적지인가?
+            if(building[pz][py][px] == 'E'){
+                System.out.println("Escaped in "+ cnt+ " minute(s).");
+                return;
+            } else {
+                //3.연결된 곳을 순회
+                for(int i=0; i<6; i++){
+                    int tz = dz[i] + pz;
+                    int ty = dy[i] + py;
+                    int tx = dx[i] + px;
+                    //4.갈수 있는가
+                    if(tz >= 0 && tz < L && ty >= 0 && ty < R && tx >= 0 && tx < C) {
+                        if(!visited[tz][ty][tx] && building[tz][ty][tx] != '#'){
+                            //5.체크인
+                            visited[tz][ty][tx] = true;
+                            //6.큐에 넣음
+                            //최단시간을 구하기 위해 cnt를 큐안에 집어넣어서 각 케이스별로 cnt를 구한다.
+                            queue.add(new int[] {tz,ty,tx, cnt+1});
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("Trapped!");
+    }
+}
