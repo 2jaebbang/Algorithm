@@ -1,0 +1,94 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int T, H, W;
+    static final int[] dy = {-1, 1, 0, 0};
+    static final int[] dx = {0, 0, -1, 1};
+    static char[][] map;
+    static int[][] visited;
+    static Queue<int[]> queuePerson;
+    static Queue<int[]> queueFire;
+
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        T = Integer.parseInt(br.readLine());
+        StringTokenizer st;
+        for(int t=0; t<T; t++){
+            st = new StringTokenizer(br.readLine());
+            W = Integer.parseInt(st.nextToken());
+            H = Integer.parseInt(st.nextToken());
+            map = new char[H][W];
+            visited = new int[H][W];
+            queuePerson = new LinkedList<>();
+            queueFire = new LinkedList<>();
+
+            for(int i=0; i<H; i++){
+                String str = br.readLine();
+                for(int j=0; j<W; j++){
+                    map[i][j] = str.charAt(j);
+                    if(map[i][j] == '@'){
+                        queuePerson.add(new int[]{i,j,1});
+                        visited[i][j] = 1;
+                    }
+                    if (map[i][j] == '*') {
+                        queueFire.add(new int[]{i, j});
+                        visited[i][j] = 2;
+                    }
+                }
+            }
+            bfs();
+        }
+    }
+
+    static void bfs() {
+        while(!queuePerson.isEmpty()){
+                int fireSize = queueFire.size();
+                for(int i=0; i<fireSize; i++){
+                    //1.큐에서 꺼내옴
+                    int[] polledFire = queueFire.poll();
+                    for(int j=0; j<4; j++){
+                        int ty = polledFire[0] + dy[j];
+                        int tx = polledFire[1] + dx[j];
+                        //4.갈수 있는가  visited 0 : 사람 방문전, 1: 사람 방문 후, 2: 불 방문
+                        if(ty >= 0 && ty < H && tx >= 0 && tx < W){
+                            if(map[ty][tx] != '#' && visited[ty][tx] != 2){
+                                //5.체크인
+                                visited[ty][tx] = 2;
+                                //6.큐에 넣음
+                                queueFire.add(new int[] {ty ,tx});
+                            }
+                        }
+                    }
+                }
+                int personSize = queuePerson.size();
+                for(int t=0; t<personSize; t++){
+                    //1.큐에서 꺼내옴
+                    int[] polledPerson = queuePerson.poll();
+                    //2.목적지인가? 현재 맵의 가장자리에 있을 경우
+                    if(polledPerson[0] == H-1 || polledPerson[0] == 0 || polledPerson[1] == W-1 || polledPerson[1] == 0){
+                        System.out.println(polledPerson[2]);
+                        return;}
+                for(int i=0; i<4; i++){
+                    int ty = polledPerson[0] + dy[i];
+                    int tx = polledPerson[1] + dx[i];
+                    //4.갈수 있는가  visited 0 : 사람 방문전, 1: 사람 방문 후, 2: 불 방문
+                    if(ty >= 0 && ty < H && tx >= 0 && tx < W){
+                        if(map[ty][tx] == '.' && visited[ty][tx] == 0){
+                            //5.체크인
+                            visited[ty][tx] = 1;
+                            //6.큐에 넣음
+                            queuePerson.add(new int[] {ty ,tx, polledPerson[2]+1});
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("IMPOSSIBLE");
+    }
+}
