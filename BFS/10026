@@ -1,0 +1,78 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Main {
+    private static class RGB {
+        int y;
+        int x;
+        char color;
+        public RGB(int y, int x, char color){
+            this.y =y;
+            this.x = x;
+            this.color= color;
+        }
+    }
+
+    static final int[] dy = {-1,1,0,0};
+    static final int[] dx = {0,0,-1,1};
+    static int N;
+    static char[][] mapNatural, mapUnnatural;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        mapNatural = new char[N][N];
+        mapUnnatural = new char[N][N];
+
+        for (int i = 0; i < N; i++) {
+            String line = br.readLine();
+            for(int j=0; j<N; j++){
+                mapNatural[i][j] = line.charAt(j);
+                mapUnnatural[i][j] = line.charAt(j);
+                if(mapUnnatural[i][j] == 'R')
+                    mapUnnatural[i][j] = 'G';
+            }
+        }
+
+        System.out.println(bfs(mapNatural) + " "+ bfs(mapUnnatural));
+    }
+
+    static int bfs(char[][] map) {
+        Queue<RGB> queue = new LinkedList<>();
+        boolean[][] visited = new boolean[N][N];
+        int count = 0;
+        for(int i=0; i<N; i++){
+            for(int j=0; j<N; j++){
+                if(!visited[i][j]){
+                    queue.add(new RGB(i,j,map[i][j]));
+                    count++;
+                    while(!queue.isEmpty()){
+                        //1.큐에서 꺼내옴
+                        RGB rgb = queue.poll();
+                        //2.목적지인가?
+                        //3.연결된 곳을 순회
+                        for(int k=0; k<4; k++){
+                            int ty = dy[k] + rgb.y;
+                            int tx = dx[k] + rgb.x;
+                            //4.갈 수 있는가?
+                            if(ty >= 0 && ty < N && tx >= 0 && tx < N && !visited[ty][tx]){
+                                if(map[ty][tx] == rgb.color){
+                                    //5.체크인
+                                    visited[ty][tx] = true;
+                                    //6.큐에 넣음
+                                    queue.add(new RGB(ty,tx,map[ty][tx]));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return count;
+    }
+}
