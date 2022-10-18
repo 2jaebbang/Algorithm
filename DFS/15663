@@ -1,0 +1,56 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int N, M;
+    static boolean[] visited;
+    static int[] map;
+    static int[] arr;
+    static StringBuilder sb = new StringBuilder();
+    static LinkedHashSet<String> set = new LinkedHashSet<>();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        map = new int[N];
+        arr = new int[M];
+        visited = new boolean[N];
+
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            map[i] = Integer.parseInt(st.nextToken());
+        }
+        Arrays.sort(map);
+        dfs(0);
+        System.out.print(sb);
+    }
+
+    static void dfs(int cnt) {
+        StringBuilder sbTemp = new StringBuilder();
+        if(cnt == M){
+            for(int i=0; i<M; i++){
+                sbTemp.append(arr[i]).append(" ");
+            }
+            //set에 중복되지 않는 경우에만 sb에 추가한다.
+            if(!set.contains(sbTemp.toString())){
+                set.add(sbTemp.toString());
+                sb.append(sbTemp);
+                sb.append('\n');
+            }
+        } else {
+            for(int i=0; i<N; i++){
+                if(!visited[i]){
+                    visited[i] = true;
+                    arr[cnt] = map[i];
+                    dfs(cnt+1);
+                    visited[i] = false;
+                }
+            }
+        }
+    }
+}
