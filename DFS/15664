@@ -1,0 +1,49 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int N, M;
+    static StringBuilder sb = new StringBuilder();
+    static int[] map;
+    static int[] arr;
+    static LinkedHashSet<String> set;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        set = new LinkedHashSet<>();
+        map = new int[N];
+        arr = new int[M];
+
+        st = new StringTokenizer(br.readLine());
+        for(int i=0; i<N; i++){
+            map[i] = Integer.parseInt(st.nextToken());
+        }
+        Arrays.sort(map);
+        dfs(0,0);
+        System.out.print(sb);
+    }
+
+    static void dfs(int current, int cnt) {
+        StringBuilder sb2 = new StringBuilder();
+        if(cnt == M){
+            for(int i=0; i<M; i++){
+                sb2.append(arr[i]).append(" ");
+            }
+            if(!set.contains(sb2.toString())){
+                sb.append(sb2).append("\n");
+                set.add(sb2.toString());
+            }
+        } else {
+            for(int i=current; i<N; i++){
+                arr[cnt] = map[i];
+                dfs(i+1, cnt+1);
+            }
+        }
+    }
+}
