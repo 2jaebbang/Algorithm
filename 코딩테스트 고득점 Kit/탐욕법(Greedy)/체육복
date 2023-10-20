@@ -1,0 +1,34 @@
+class Solution {
+            public int solution(int n, int[] lost, int[] reserve) {
+                int[] people = new int[n];
+                int answer = n;
+
+                for(int i : lost){
+                    people[i-1]--;
+                }
+                for(int i : reserve){
+                    people[i-1]++;
+                }
+
+                for(int i=0; i<people.length; i++){
+                    //잃어버렸을경우
+                    if(people[i] == -1) {
+                        //index가 0보다 작지 않고, 전번호 사람이 여벌을 가지고 있을때
+                        if(i-1 >= 0 && people[i-1] == 1){
+                            people[i]++;
+                            people[i-1]--;
+                        }
+                        //index가 마지막 인덱스보다 크지 않고, 뒷번호 사람이 여벌을 가지고 있을때
+                        else if(i+1 < people.length && people[i+1] == 1){
+                            people[i]++;
+                            people[i+1]--;
+                        }
+                        //빌릴수 없을 경우 answer--
+                        else {
+                            answer--;
+                        }
+                    }
+                }
+                return answer;
+            }
+        }
