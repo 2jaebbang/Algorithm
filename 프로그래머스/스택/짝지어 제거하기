@@ -1,0 +1,23 @@
+import java.util.*;
+class Solution
+{
+    public int solution(String s)
+    {
+        Stack<Character> stack = new Stack<>();
+        for(int i=0; i<s.length(); i++){
+            char c = s.charAt(i);
+            // 1.문자열에서 같은 알파벳 2개 붙어있는지
+            if(!stack.isEmpty() && stack.peek().equals(c)){
+                // 2.붙어있으면 제거
+                stack.pop();
+                // 3.앞뒤로 문자열을 이어 붙임
+                continue;
+            }
+            stack.push(c);
+        }
+        if(stack.isEmpty()){
+            return 1;
+        }
+        return 0;
+    }
+}
