@@ -1,0 +1,29 @@
+import java.util.*;
+class Solution {
+    public int solution(int[][] board, int[] moves) {
+        int answer = 0;
+        Stack<Integer> stack = new Stack<>();
+        
+        A:for(int i=0; i<moves.length; i++){
+            for(int j=0; j<board.length; j++){
+                // 1.인형을 집을 위치 저장
+                int location = board[j][moves[i]-1];
+                // 2.0이 아닐경우(인형이 있을 경우)
+                if(location != 0){
+                    // 3.인형을 집었기 때문에 해당 위치는 0처리
+                    board[j][moves[i]-1] = 0;
+                    // 4.스택이 비어있지 않고, 가장 위 인형이 현재 집은 인형과 같을 경우
+                    if(!stack.isEmpty() && stack.peek() == location){
+                        stack.pop();
+                        answer+=2;
+                        continue A;
+                    }
+                    // 5.스택 꼭대기에 있는 인형이 현재 집은 인형과 다르므로, 그대로 집은 인형을 스택에 넣는다
+                    stack.push(location);
+                    break;
+                }
+            }
+        }
+        return answer;
+    }
+}
