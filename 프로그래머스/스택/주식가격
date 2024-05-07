@@ -1,0 +1,25 @@
+import java.util.*;
+class Solution {
+    public int[] solution(int[] prices) {
+        int n = prices.length;
+        int[] answer = new int[n]; // 1.가격이 떨어지지 않은 기간을 저장할 배열
+        
+        // 스택을 사용해 이전 가격과 현재 가격 비교
+        Stack<Integer> stack = new Stack<>();
+        stack.push(0);
+        for(int i=1; i<n; i++){
+            while(!stack.isEmpty() && prices[stack.peek()] > prices[i]){
+                // 2.가격이 떨어졌으므로 이전 가격의 기간 계산
+                int j = stack.pop();
+                answer[j] = i - j;
+            }
+            stack.push(i);
+        }
+        // 3.스택에 남아 있는 가격들은 가격이 떨어지지 않은 경우
+        while(!stack.isEmpty()){
+                int j = stack.pop();
+                answer[j] = n - j -1;
+        }
+        return answer;
+    }
+}
