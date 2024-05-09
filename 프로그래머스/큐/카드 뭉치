@@ -1,0 +1,36 @@
+import java.util.*;
+class Solution {
+    public String solution(String[] cards1, String[] cards2, String[] goal) {
+        // 1.cards와 goal을 deque로 변환
+        ArrayDeque<String> queue1 = new ArrayDeque<>();
+        ArrayDeque<String> queue2 = new ArrayDeque<>();
+        ArrayDeque<String> answer = new ArrayDeque<>();
+        
+        for(int i=0; i<cards1.length; i++){
+            queue1.add(cards1[i]);
+        }
+        for(int i=0; i<cards2.length; i++){
+            queue2.add(cards2[i]);
+        }
+        for(int i=0; i<goal.length; i++){
+            answer.add(goal[i]);
+        }
+        
+        // 2.answer에 문자열이 남아 있으면 계속 반복
+        while(!answer.isEmpty()){
+                // 3.cards1의 front와 일치하는 경우
+                if(!queue1.isEmpty() && queue1.peekFirst().equals(answer.peekFirst())){
+                    queue1.removeFirst();
+                    answer.removeFirst();
+                }
+                // 4.cards2의 front와 일치하는 경우
+                else if(!queue2.isEmpty() && queue2.peekFirst().equals(answer.peekFirst())){
+                    queue2.removeFirst();
+                    answer.removeFirst();
+                } else {
+                    return "No"; 
+                }
+        }
+        return "Yes";
+    }
+}
