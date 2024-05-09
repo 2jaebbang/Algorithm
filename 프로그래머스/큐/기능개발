@@ -1,0 +1,34 @@
+import java.util.*;
+class Solution {
+    public int[] solution(int[] progresses, int[] speeds) {
+        int n = progresses.length;
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        ArrayDeque<Integer> progressQueue = new ArrayDeque<>();
+        ArrayDeque<Integer> speedQueue = new ArrayDeque<>();
+        
+        // 1.Queue 초기화
+        for(int i=0; i<n; i++){
+            progressQueue.add(progresses[i]);
+            speedQueue.add(speeds[i]);
+        }
+
+        // 2.시작일 초기화
+        int day = 1;
+        
+        while(!progressQueue.isEmpty()){
+            int progressQueuePeek = progressQueue.peek();
+            int speedQueuePeek = speedQueue.peek();
+            
+            // 3.가장 앞에 있는 진행률 + 속도X일 계산해서 100을 넘을때까지의 시간 계산
+            while(progressQueuePeek + speedQueuePeek*day < 100){
+                day++;
+            }
+            
+            // 4.작업이 완료가 되면 map에 저장하고, 큐에서 제거
+            map.put(day, map.getOrDefault(day,0)+1);
+            progressQueue.removeFirst();
+            speedQueue.removeFirst();
+        }
+        return map.values().stream().mapToInt(Integer::intValue).toArray();
+    }
+}
