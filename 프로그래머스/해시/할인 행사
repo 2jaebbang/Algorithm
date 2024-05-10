@@ -1,0 +1,31 @@
+import java.util.*;
+class Solution {
+    public int solution(String[] want, int[] number, String[] discount) {
+        int answer = 0; // 총 일수
+        
+        // 1.want, number배열의 값을 해시맵에 저장
+        HashMap<String, Integer> wantMap = new HashMap<>();
+        for(int i=0; i<want.length; i++){
+                wantMap.put(want[i], number[i]);
+        }
+        
+        // 2.특정일 i에 회원가입 시 할인받을 수 있는 품목 체크 (특정일 기준 10일간 쇼핑을 해야하기 때문에 -9 처리)
+        for(int i=0; i<discount.length-9; i++){
+            // 3.i일 회원가입 시 할인받는 제품 및 개수를 담을 해시맵
+            HashMap<String, Integer> discountMap = new HashMap<>();
+            
+            // 4.i일 회원가입 시 할인받는 제품 및 개수로 해시맵 구성
+            for(int j=i; j<10+i; j++){
+                String todayDiscount = discount[j];
+                if(wantMap.containsKey(todayDiscount)){
+                    discountMap.put(todayDiscount, discountMap.getOrDefault(todayDiscount, 0)+1);
+                }
+            }
+            // 5.할인하는 상품의 개수가 원하는 수량과 일치하면 정답 변수에 1 추가
+            if(wantMap.equals(discountMap))
+                answer++;
+        }
+        
+        return answer;
+    }
+}
