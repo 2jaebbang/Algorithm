@@ -1,0 +1,13 @@
+import java.util.*;
+class Solution {
+    public long solution(long n) {
+        long answer = 0;
+        String[] digits = String.valueOf(n).split("");
+        Arrays.sort(digits, Collections.reverseOrder());
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<digits.length; i++){
+            sb.append(digits[i]);
+        }
+        return Long.parseLong(sb.toString());
+    }
+}
