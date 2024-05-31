@@ -1,0 +1,23 @@
+import java.util.*;
+class Solution {
+    public int[] solution(String s) {
+        ArrayList<Integer> answer = new ArrayList<>();
+        String newS = s.substring(1, s.length()-2).replace("{","");
+        String[] arr = newS.split("},");
+        
+        Arrays.sort(arr,(o1,o2) -> Integer.compare(o1.length(), o2.length()));
+        
+        HashSet<Integer> set = new HashSet<>();
+        for(String a : arr){
+            String[] numArr = a.split(",");
+            for(int i=0; i<numArr.length; i++){
+                int num = Integer.parseInt(numArr[i]);
+                if(!set.contains(num)){
+                    set.add(num);
+                    answer.add(num);
+                }
+            }
+        }
+        return answer.stream().mapToInt(Integer::intValue).toArray();
+    }
+}
