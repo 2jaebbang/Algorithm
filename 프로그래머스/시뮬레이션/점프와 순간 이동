@@ -1,0 +1,7 @@
+import java.util.*;
+public class Solution {
+    public int solution(int n) {
+        int answer = Integer.toBinaryString(n).replace("0","").length();
+        return answer;
+    }
+}
