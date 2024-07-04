@@ -1,0 +1,31 @@
+class Solution {
+    public int solution(int n, int k) {
+        int answer = 0;
+        StringBuilder temp = new StringBuilder();
+        while(n!=0){
+            temp.append(n%k);
+            n /= k;
+        }
+        String converted = temp.reverse().toString();
+        String[] arr = converted.split("0");
+        for(String str : arr){
+            if(!str.isEmpty()){
+                long num = Long.parseLong(str);
+                if(isSosu(num))
+                    answer++;
+            }
+        }
+        return answer;
+    }
+    
+    public boolean isSosu(long n){
+        if (n < 2) {
+            return false;
+        }
+        for(int i=2; i<=Math.sqrt(n); i++){
+            if(n%i==0)
+                return false;
+        }
+        return true;
+    }
+}
