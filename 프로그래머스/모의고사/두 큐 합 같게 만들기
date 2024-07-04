@@ -1,0 +1,40 @@
+import java.util.*;
+class Solution {
+    public int solution(int[] queue1, int[] queue2) {
+        Queue<Integer> q1 = new ArrayDeque<>();
+        Queue<Integer> q2 = new ArrayDeque<>();
+        long sum1 = 0;
+        long sum2 = 0;
+        
+        for(int i=0; i<queue1.length; i++){
+            sum1 += (long) queue1[i];
+            q1.offer(queue1[i]);
+        }
+        for(int i=0; i<queue2.length; i++){
+            sum2 += (long) queue2[i];
+            q2.offer(queue2[i]);
+        }
+        
+        int answer = 0;
+        
+        while(sum1 != sum2){
+            if(answer > (queue1.length + queue2.length)*2)
+                return -1;
+            if(sum1 > sum2){
+                int poll1 = q1.poll();
+                q2.offer(poll1);
+                sum1 -= (long) poll1;
+                sum2 += (long) poll1;
+            } 
+            else if(sum1 < sum2){
+                int poll2 = q2.poll();
+                q1.offer(poll2);
+                sum1 += (long) poll2;
+                sum2 -= (long) poll2;
+            }
+            answer++;
+        }
+        
+        return answer;
+    }
+}
